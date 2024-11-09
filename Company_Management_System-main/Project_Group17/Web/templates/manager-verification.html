@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Verification</title>
+    <link rel="stylesheet" href="../static/css/manager-verification_style.css">
+</head>
+<body>
+    <a href="reset_password.html" class="back-button">Return</a>
+    
+    <div class="container">
+        <h2>Manager Verification</h2>
+        <div>
+            <p>Department: <span class="info" id="department-name">Loading...</span></p>
+            <p>Random Manager ID: <span class="info" id="manager-id">Loading...</span></p>
+        </div>
+        <div>
+            <button onclick="submitRequirement()">Submit Requirement</button>
+        </div>
+    </div>
+
+    <script>
+        async function loadDepartmentAndManager() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userID = urlParams.get('userID');
+            
+            if (!userID) {
+                alert('User ID is missing. Please go back and try again.');
+                return;
+            }
+
+            try {
+                // 获取部门和随机经理ID
+                const response = await fetch(`http://localhost:3001/get-department-and-manager?userID=${encodeURIComponent(userID)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('department-name').textContent = result.department;
+                    document.getElementById('manager-id').textContent = result.managerID;
+                } else {
+                    alert(result.message || 'Failed to load department and manager information.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while loading department and manager information.');
+            }
+        }
+
+        function submitRequirement() {
+            const managerID = document.getElementById('manager-id').textContent;
+            const developerID = new URLSearchParams(window.location.search).get('userID');
+    
+            if (!developerID) {
+                alert('Developer ID is missing. Please try again.');
+                return;
+            }
+            if (!managerID || managerID === 'Loading...') {
+                alert('Manager ID is missing. Please try again.');
+                return;
+            }
+
+            // 创建重置请求
+            const resetRequest = {
+                developerID: developerID,
+                managerID: managerID,
+                message: 'Password reset request submitted',
+                timestamp: new Date().toLocaleString()
+            };
+
+            // 获取并更新localStorage中的请求数据
+            let managerRequests = JSON.parse(localStorage.getItem('managerRequests')) || {};
+            if (!managerRequests[managerID]) managerRequests[managerID] = [];
+            managerRequests[managerID].push(resetRequest);
+
+            // 保存请求
+            localStorage.setItem('managerRequests', JSON.stringify(managerRequests));
+
+            alert('Requirement submitted successfully!');
+        }
+
+        window.onload = loadDepartmentAndManager;
+    </script>
+</body>
+</html>

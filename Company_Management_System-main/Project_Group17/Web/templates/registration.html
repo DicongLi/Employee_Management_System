@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <link rel="stylesheet" href="../static/css/registration_style.css">
+</head>
+<body>
+
+    <a href="manager.html" class="back-button">Return</a>
+    <div class="container">
+        <h1>Registration</h1>
+        <p>Employee ID: <span id="employee-id">Loading...</span></p>
+        <p>Developer ID: <span id="developer-id">Loading...</span></p>
+
+        <label for="developer-password">Developer Password:</label>
+        <input type="password" id="developer-password" placeholder="Enter password">
+        <p class="error-message" id="password-error"></p>
+
+        <label for="developer-name">Developer Name:</label>
+        <input type="text" id="developer-name" placeholder="Enter name">
+
+        <label for="gender">Gender:</label>
+        <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select>
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="text" id="phone-number" placeholder="Enter phone number">
+
+        <label for="education">Education:</label>
+        <select id="education">
+            <option value="">Select Education</option>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Post graduate">Post graduate</option>
+        </select>
+
+        <p>Position: <span id="position-name">Loading...</span></p>
+
+        <!-- Submit Button -->
+        <button onclick="submitRegistration()">Submit</button>
+    </div>
+    <script>
+        async function loadRegistrationData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const managerID = urlParams.get('managerID');
+
+            if (!managerID) {
+                alert('Manager ID is missing. Please login again.');
+                return;
+            }
+
+            try {
+                // 获取职位信息
+                const positionResponse = await fetch(`http://localhost:3001/get-position-by-manager?managerID=${encodeURIComponent(managerID)}`);
+                const positionResult = await positionResponse.json();
+
+                if (positionResult.success) {
+                    document.getElementById('position-name').textContent = positionResult.position;
+                } else {
+                    alert(positionResult.message || 'Failed to load position information.');
+                }
+
+                // 获取下一个 Developer ID
+                const developerResponse = await fetch(`http://localhost:3001/get-next-developer-id`);
+                const developerResult = await developerResponse.json();
+
+                if (developerResult.success) {
+                    const developerID = developerResult.nextDeveloperID;
+                    document.getElementById('developer-id').textContent = developerID;
+
+                    // 根据 Developer ID 生成 Employee ID
+                    const developerNumber = parseInt(developerID.slice(1));
+                    const employeeID = 'e' + (developerNumber + 10000);
+                    document.getElementById('employee-id').textContent = employeeID;
+                } else {
+                    alert(developerResult.message || 'Failed to load next Developer ID.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while loading registration data.');
+            }
+        }
+
+        function validatePassword(password) {
+            const passwordPattern = /^[A-Za-z0-9]{1,25}$/;
+            return passwordPattern.test(password);
+        }
+
+        function submitRegistration() {
+            const developerPassword = document.getElementById('developer-password').value;
+            const developerName = document.getElementById('developer-name').value;
+            const gender = document.getElementById('gender').value;
+            const phoneNumber = document.getElementById('phone-number').value;
+            const education = document.getElementById('education').value;
+            const position = document.getElementById('position-name').textContent;
+            const developerID = document.getElementById('developer-id').textContent;
+            const employeeID = document.getElementById('employee-id').textContent;
+            const passwordError = document.getElementById('password-error');
+
+            // 清空之前的错误消息
+            passwordError.textContent = '';
+
+            // 验证密码格式
+            if (!validatePassword(developerPassword)) {
+                passwordError.textContent = 'Password must be 1-25 characters and contain only letters and numbers.';
+                document.getElementById('developer-password').value = ''; // 清空输入框
+                return;
+            }
+
+            // 检查所有字段是否已填写
+            if (!developerPassword || !developerName || !gender || !phoneNumber || !education) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // 发送注册信息到服务器
+            const registrationData = {
+                employeeID,
+                developerID,
+                developerPassword,
+                developerName,
+                gender,
+                phoneNumber,
+                education,
+                position
+            };
+
+            fetch('http://localhost:3001/register-developer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registrationData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration submitted successfully!');
+                    // 清空表单内容或重定向到其他页面
+                } else {
+                    alert(data.message || 'Registration failed.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the registration.');
+            });
+        }
+
+        window.onload = loadRegistrationData;
+    </script>
+
+</body>
+</html>

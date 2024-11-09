@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestion Reply</title>
+    <link rel="stylesheet" href="../static/css/suggestion-reply_style.css">
+</head>
+<body>
+
+    <a href="manager.html" class="back-button">Return</a>
+
+    <h1>Suggestion Reply</h1>
+
+    <form class="reply-form" id="replyForm">
+        <select name="type" id="typeSelect" required>
+            <option value="">Select Type</option>
+            <option value="Project">Project</option>
+            <option value="Environment">Environment</option>
+            <option value="Regulation">Regulation</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <select name="suggestion" id="suggestionSelect" required>
+            <option value="">Select Suggestion</option>
+        </select>
+
+        <p class="no-suggestions" id="noSuggestions">No suggestions found for this type.</p>
+
+        <div class="suggestion-content" id="suggestionContent">
+            <p id="suggestionText">Suggestion details will appear here...</p>
+        </div>
+
+        <textarea name="reply" placeholder="Enter your reply here..." required></textarea>
+        <input type="submit" value="Submit Reply">
+    </form>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>Reply submitted successfully!</p>
+        </div>
+    </div>
+
+    <script>
+        const storedSuggestions = JSON.parse(localStorage.getItem('suggestions')) || [];
+        const storedReplies = JSON.parse(localStorage.getItem('replies')) || [];
+        const storedTypes = JSON.parse(localStorage.getItem('suggestionTypes')) || [];
+
+        const typeSelect = document.getElementById('typeSelect');
+        const suggestionSelect = document.getElementById('suggestionSelect');
+        const suggestionContent = document.getElementById('suggestionContent');
+        const suggestionText = document.getElementById('suggestionText');
+        const noSuggestions = document.getElementById('noSuggestions');
+
+        typeSelect.addEventListener('change', function() {
+            const selectedType = typeSelect.value;
+
+            // Clear previous suggestions
+            suggestionSelect.innerHTML = '<option value="">Select Suggestion</option>';
+            suggestionContent.style.display = 'none';
+            noSuggestions.style.display = 'none';
+
+            let suggestionsFound = false;
+
+            // Filter suggestions based on type and check if not replied
+            storedSuggestions.forEach((suggestion, index) => {
+                if (storedTypes[index] === selectedType && !storedReplies[index]) {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = suggestion;
+                    suggestionSelect.appendChild(option);
+                    suggestionsFound = true;
+                }
+            });
+
+            if (!suggestionsFound) {
+                noSuggestions.style.display = 'block'; // Show message if no suggestions found
+            }
+        });
+
+        suggestionSelect.addEventListener('change', function() {
+            const selectedIndex = suggestionSelect.value;
+            if (selectedIndex >= 0) {
+                suggestionText.textContent = storedSuggestions[selectedIndex];
+                suggestionContent.style.display = 'block';
+            } else {
+                suggestionContent.style.display = 'none';
+            }
+        });
+
+        const replyForm = document.getElementById('replyForm');
+        replyForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const selectedIndex = suggestionSelect.value;
+            const replyText = replyForm.querySelector('textarea[name="reply"]').value;
+
+            if (confirm("Are you sure you want to submit this reply?")) {
+                storedReplies[selectedIndex] = replyText;
+                localStorage.setItem('replies', JSON.stringify(storedReplies));
+
+                // Remove the selected suggestion from the dropdown
+                suggestionSelect.remove(suggestionSelect.selectedIndex);
+                replyForm.reset();
+                suggestionContent.style.display = 'none';
+
+                // Show success modal
+                const successModal = document.getElementById('successModal');
+                successModal.style.display = "block";
+
+                document.getElementById('closeModal').onclick = function() {
+                    successModal.style.display = "none";
+                };
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Dashboard</title>
+    <link rel="stylesheet" href="../static/css/start_style.css">
+
+    <script>
+    // Start task
+    function loadAvailableTasks(developerId) {
+        fetch(`http://localhost:3001/api/available-tasks?developer_id=${developerId}`)
+            .then(response => response.json())
+            .then(tasks => {
+                const taskSelect = document.getElementById("taskID");
+                taskSelect.innerHTML = '<option value="">Select Task ID</option>';  // 清空并添加默认选项
+                tasks.forEach(task => {
+                    const option = document.createElement("option");
+                    option.value = task.task_id;
+                    option.text = "Task ID: " + task.task_id;
+                    taskSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error loading tasks:", error));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const username = localStorage.getItem("username");
+
+    if (username) {
+        document.getElementById("usernameDisplay").innerText = "Hello, " + username + "!";
+        loadAvailableTasks(username);  // Load tasks when the page loads
+    } else {
+        window.location.href = "login.html";
+    }
+
+    // Move form event listener inside DOMContentLoaded
+    const startTaskForm = document.getElementById('start-taskForm');
+    if (startTaskForm) {
+        startTaskForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const taskId = document.getElementById("taskID").value;
+
+            if (taskId) {
+                fetch("http://localhost:3001/api/start-task", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ task_id: taskId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Task started successfully!");
+                        localStorage.setItem("message", "Task started successfully!");
+                        localStorage.setItem("taskID", taskId);
+                        window.location.href = "developer.html";
+                    } else {
+                        alert("Failed to start task.");
+                    }
+                })
+                .catch(error => console.error("Error starting task:", error));
+            } else {
+                alert("Please select a task ID.");
+            }
+        });
+    }
+});
+</script>
+
+<script src="../static/js/engine2.js"></script>
+
+    <script>
+        // 在任务开始成功后的回调中
+        if (data.success) {
+            alert("Task started successfully!");
+
+            // 保存成功消息和任务 ID 到 localStorage
+            localStorage.setItem("message", "Task started successfully!");
+            localStorage.setItem("taskID", taskId);
+
+            // 跳转到 developer.html
+            window.location.href = "developer.html";
+        } else {
+            alert("Failed to start task.");
+        }
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Developer Dashboard</h1>
+        <h2 id="usernameDisplay">Welcome, Developer!</h2>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="start.html">Start Task</a>
+                <a href="submit.html">Submit Task</a>
+            </div>
+        </div>   
+        
+        <!-- Activity Button -->
+        <a href="developer.html" class="activity">Activity</a>
+
+        <!-- Feedback Dropdown -->
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-box.html">Suggestion Box</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>  
+        </div>     
+
+        <!-- Employee Handbook Button -->
+        <a href="employee-handbook.html">Employee Handbook</a>
+
+        <!-- Account Button -->
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2>Welcome, Developer!</h2>
+        <p>This is your dashboard. Here, you can start task.</p>
+        
+        <div class="start-task">
+            <form id="start-taskForm">
+                <label for="taskID">Task ID:</label>
+                <select id="taskID" required>
+                    <option value="">Select Task ID</option>
+                </select>
+                <button type="submit">Start Task</button>
+            </form>
+        </div>
+    </div>
+
+        <!-- Activity Reports Section -->
+        <div id="activityReports">
+            <!-- 项目信息会在这里动态加载 -->
+        </div>
+    </div>
+
+</body>
+</html>

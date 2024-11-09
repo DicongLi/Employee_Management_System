@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Progress Dashboard</title>
+    <link rel="stylesheet" href="../static/css/task-progress_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+    
+</head>
+<body>
+
+    <div class="header">
+        <h1>Task Process</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="Department.html">Developer List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html" onclick="goToRegistration(event)">Registration</a>
+        <a href="employee-handbook.html?from=manager">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+    
+    <div class="nav">
+        <!-- Navigation Links -->
+    </div>
+
+    <div class="container">
+        <h2>Welcome, Manager!</h2>
+        <p>This is your dashboard. Here, you can manage employees, review feedback, and oversee projects.</p>
+
+        <div class="filter-container">
+            <select id="taskStateFilter" onchange="filterTasksByState()">
+                <option value="">Select Task State</option>
+                <option value="In process">In process</option>
+                <option value="Standing by">Standing by</option>
+                <option value="Complete">Complete</option>
+                <option value="Unevaluated">Unevaluated</option>
+            </select>
+        </div>
+
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Task Name</th>
+                    <th>Task State</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Task rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch all task data from the server
+        let tasks = [];
+
+        fetch('http://localhost:3001/api/all-tasks')
+            .then(response => response.json())
+            .then(data => {
+                tasks = data; // Store all tasks in the tasks array
+                // No display of tasks initially until a state is selected
+            })
+            .catch(error => {
+                console.error('Error fetching task data:', error);
+            });
+
+        // Display tasks in the table
+        function displayTasks(taskData) {
+            const taskTableBody = document.querySelector('#taskTable tbody');
+            taskTableBody.innerHTML = ''; // Clear previous tasks
+
+            taskData.forEach(task => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${task.task_id}</td>
+                    <td>${task.task_name}</td>
+                    <td>${task.task_state}</td>
+                    <td>${task.start_time}</td>
+                    <td>${task.end_time}</td>
+                `;
+                taskTableBody.appendChild(row);
+            });
+        }
+
+        // Filter tasks by the selected state
+        function filterTasksByState() {
+            const selectedState = document.getElementById('taskStateFilter').value;
+            const filteredTasks = selectedState ? tasks.filter(task => task.task_state === selectedState) : [];
+            displayTasks(filteredTasks);
+        }
+    </script>
+
+    <!-- Activity Reports Section -->
+    <div id="activityReports">
+        <!-- 项目信息会在这里动态加载 -->
+    </div>
+</div>
+
+</body>
+</html>

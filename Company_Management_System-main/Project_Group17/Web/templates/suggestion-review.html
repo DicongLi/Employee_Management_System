@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Suggestion Review</title>
+    <link rel="stylesheet" href="../static/css/suggestion-review.css">
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="back-button">Return</a>
+    <h1>Suggestion Review</h1>
+
+    <div class="content-wrapper">
+        <div class="intro">
+            <p>Here are the suggestions that have been replied to, along with their types:</p>
+        </div>
+
+        <div id="suggestionContainer"></div>
+    </div>
+
+    <script>
+        // 从localStorage中获取建议、回复和标签（类型）
+        const suggestions = JSON.parse(localStorage.getItem('suggestions')) || [];
+        const replies = JSON.parse(localStorage.getItem('replies')) || [];
+        const suggestionTypes = JSON.parse(localStorage.getItem('suggestionTypes')) || [];
+
+        const container = document.getElementById('suggestionContainer');
+
+        // 遍历所有建议，只显示已回复的建议，并附加标签
+        suggestions.forEach((suggestion, index) => {
+            // 只显示已回复的建议
+            if (replies[index]) {
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.classList.add('suggestion');
+                
+                const suggestionTitle = document.createElement('h2');
+                suggestionTitle.textContent = `Suggestion #${index + 1}`;
+                const suggestionText = document.createElement('p');
+                suggestionText.textContent = suggestion;
+
+                // 显示建议对应的标签（类型）
+                const suggestionLabel = document.createElement('div');
+                suggestionLabel.classList.add('label');
+                suggestionLabel.textContent = `Type: ${suggestionTypes[index]}`; // 显示类型
+
+                suggestionDiv.appendChild(suggestionTitle);
+                suggestionDiv.appendChild(suggestionLabel);  // 添加标签到每个建议
+                suggestionDiv.appendChild(suggestionText);
+
+                // 显示对应的回复
+                const replyDiv = document.createElement('div');
+                replyDiv.classList.add('reply');
+                replyDiv.innerHTML = `<strong>Reply:</strong> ${replies[index]}`;
+                suggestionDiv.appendChild(replyDiv);
+
+                container.appendChild(suggestionDiv);
+            }
+        });
+    </script>
+
+    <script>
+        function setDynamicBackground() {
+            const now = new Date();
+            const hour = now.getHours();
+            const body = document.body;
+
+            if (hour >= 6 && hour < 12) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage3.webp')";
+            } else if (hour >= 12 && hour < 18) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage2.webp')";
+            } else {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage1.webp')";
+            }
+        }
+
+        setDynamicBackground();
+        setInterval(setDynamicBackground, 3600000);
+    </script>
+
+</body>
+</html>

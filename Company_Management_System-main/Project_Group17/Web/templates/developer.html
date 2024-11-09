@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Dashboard</title>
+    <link rel="stylesheet" href="../static/css/developer_style.css">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const username = localStorage.getItem("username");
+
+            if (username) {
+                document.getElementById("welcomeMessage").innerText = "Welcome, " + username + "!";
+            } else {
+                // 如果没有找到用户名信息，则重定向到 login.html
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const username = localStorage.getItem("username");
+
+            if (username) {
+                document.getElementById("welcomeMessage").innerText = "Welcome, " + username + "!";
+            } else {
+                window.location.href = "login.html";
+            }
+
+            // 检查是否有成功消息
+            const message = localStorage.getItem("message");
+            const taskId = localStorage.getItem("taskID");
+
+            if (message && taskId) {
+                // 显示成功消息和任务 ID
+                const messageContainer = document.getElementById("activityReports");
+                messageContainer.innerHTML = `<div class="activity-report">
+                    <p>${message}</p>
+                    <p>Task ID: ${taskId}</p>
+                </div>`;
+
+                // 清除 localStorage 中的消息和任务 ID
+                localStorage.removeItem("message");
+                localStorage.removeItem("taskID");
+            }
+        });
+    </script>
+
+    <script src="../static/js/engine2.js"></script>
+
+</head>
+<body>
+
+    <div class="header">
+        <h1>Developer Dashboard</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="start.html">Sart Task</a>
+                <a href="submit.html">Submit Task</a>
+            </div>
+        </div>   
+
+        <!-- Activity Button -->
+        <a href="developer.html" class="activity">Activity</a>
+
+        <!-- Feedback Dropdown -->
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-box.html">Suggestion Box</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>  
+        </div>     
+
+        <!-- Employee Handbook Button -->
+        <a href="employee-handbook.html">Employee Handbook</a>
+
+        <!-- Account Button -->
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2 id="welcomeMessage">Welcome, Developer!</h2>
+        <p>This is your dashboard. Here, you can start task, submit task, submit suggestion, and oversee projects.</p>
+            
+        <!-- Activity Reports Section -->
+        <div id="activityReports">
+            <!-- 项目信息会在这里动态加载 -->
+        </div>
+    </div>
+
+</body>
+</html>

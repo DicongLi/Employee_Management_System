@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../static/css/login_style.css">
+</head>
+<body>
+
+    <!-- Return Button -->
+    <a href="index.html" class="return-button">Return</a>
+
+    <!-- Login Form -->
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            
+            <button type="submit">Login</button>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-password">
+                <a href="reset_password.html">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal for error message -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>Password or ID is incorrect</p>
+        </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="../static/js/login.js"></script>
+
+    <!-- JavaScript for dynamic background and modal -->
+    <script>
+        function setDynamicBackground() {
+            const now = new Date();
+            const hour = now.getHours();
+            const body = document.body;
+
+            if (hour >= 6 && hour < 12) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage3.webp')";
+            } else if (hour >= 12 && hour < 18) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage2.webp')";
+            } else {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage1.webp')";
+            }
+        }
+
+        setDynamicBackground();
+        setInterval(setDynamicBackground, 3600000);
+
+        // Modal close functionality
+        document.getElementById("closeModal").onclick = function() {
+            document.getElementById("errorModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("errorModal")) {
+                document.getElementById("errorModal").style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

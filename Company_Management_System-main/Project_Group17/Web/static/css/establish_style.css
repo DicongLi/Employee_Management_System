@@ -1,0 +1,179 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/Manager1.webp');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Header */
+.header {
+    color: white;
+    padding: 15px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1); /* 设置透明背景 */
+}
+
+/* Navigation Bar */
+.nav {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0); /* 完全透明背景 */
+}
+
+.nav .search-container {
+    flex: 1;
+    display: flex;
+}
+
+/* Search Box */
+.nav .search-container input[type="text"] {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.3); /* 半透明背景 */
+    color: white;
+    outline: none;
+    width: 50%;
+}
+
+.nav .search-container input[type="text"]::placeholder {
+    color: white;
+    opacity: 0.7;
+}
+
+/* Search Button */
+.nav .search-container button {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0); /* 完全透明 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.nav .search-container button:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* 悬停时的浅透明背景 */
+}
+
+/* Navigation Links and Dropdown */
+.nav .dropdown, .nav a {
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.nav a, .nav .dropbtn {
+    color: white;
+    text-align: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 17px;
+    background-color: transparent; /* 完全透明 */
+    border: none;
+}
+
+.nav a:hover, .nav .dropbtn:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* 悬停时的浅透明背景 */
+}
+
+/* Dropdown Content */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.2); /* 设置透明背景 */
+    min-width: 160px;
+    z-index: 1;
+    box-shadow: none;
+    border-radius: 5px;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    background-color: transparent; /* 使选项的背景透明 */
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* 悬停时的浅透明背景 */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.container {
+margin: 20px;
+padding: 20px;
+background-color: rgba(8, 8, 8, 0.274); /* 半透明 */
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+margin-top: 120px; /* 将面板向下移动 */
+color: rgb(255, 255, 255);
+}
+
+.activity-report {
+margin-bottom: 20px;
+padding: 15px;
+border-left: 5px solid rgba(12, 12, 12, 0.598);
+background-color: rgba(31, 31, 31, 0.338); /* 报告部分半透明 */
+border-radius: 5px;
+color: rgb(255, 255, 255);
+}
+
+.input-section, .task-input-section {
+    margin-top: 30px;
+    transition: all 0.5s ease;
+}
+
+.input-field {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ffffff00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+button:hover {
+    background-color: #ffffff00;
+}
+
+.static-field {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+#establishTaskButton, #taskInputSection {
+    display: none;
+}
+
+.task-wrapper {
+    margin-bottom: 20px;
+}
+
+#inputSection {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.move-up {
+    transform: translateY(10px);
+    transition: all 0.5s ease;
+}

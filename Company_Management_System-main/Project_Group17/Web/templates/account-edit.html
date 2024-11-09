@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Information</title>
+    <link rel="stylesheet" href="../static/css/account-edit_style.css">
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">Return</a>
+
+    <div class="container">
+        <h2>Your Account Details</h2>
+
+        <!-- Display Employee ID -->
+        <div class="info-group">
+            <label for="employee-id">Employee ID:</label>
+            <p id="employee-id"></p>
+        </div>
+
+        <!-- Display Manager ID -->
+        <div class="info-group">
+            <label for="manager-id">Manager ID:</label>
+            <p id="manager-id"></p>
+        </div>
+
+        <!-- Display Developer ID -->
+        <div class="info-group">
+            <label for="developer-id">Developer ID:</label>
+            <p id="developer-id"></p>
+        </div>
+
+        <label for="developer-name">Name:</label>
+        <input type="text" id="developer-name" placeholder="Enter name">
+
+        <!-- Display Gender -->
+        <div class="info-group">
+            <label for="gender">Gender:</label>
+            <p id="gender"></p>
+        </div>
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="text" id="phone-number" placeholder="Enter phone number">
+
+        <label for="education">Education:</label>
+        <select id="education">
+            <option value="">Select Education</option>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Post graduate">Post graduate</option>
+        </select>
+
+        <!-- Display Position -->
+        <div class="info-group">
+            <label for="position">Position:</label>
+            <p id="position"></p>
+
+            <!-- Submit Button -->
+            <button onclick="submitRegistration()">Submit</button>
+    </div>
+
+    <script>
+        // Function to load user data from backend
+        function loadUserData() {
+            // Get role and username from localStorage
+            const userRole = localStorage.getItem('userRole');
+            const username = localStorage.getItem('username');
+            
+            if (!userRole || !username) {
+                console.error("userRole or username is missing. Please check localStorage.");
+                return;
+            }
+
+            // Fetch user data from the backend using the role and username
+            fetch(`http://localhost:3001/user-info?role=${userRole}&username=${username}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok " + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data);
+                    document.getElementById('employee-id').textContent = data.Employee_id || 'N/A';
+                    document.getElementById('manager-id').textContent = data.Manager_id || 'N/A';
+                    document.getElementById('developer-id').textContent = data.Developer_id || 'N/A';
+                    document.getElementById('gender').textContent = data.Gender || 'N/A';
+                    document.getElementById('position').textContent = data.Position || 'Manager';
+                    document.getElementById('developer-name').value = data.Name || '';
+                    document.getElementById('phone-number').value = data.Phone_number || '';
+                    document.getElementById('education').value = data.Education || '';
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        }
+
+        // Function to submit updated information
+        function submitRegistration() {
+            const updatedName = document.getElementById('developer-name').value;
+            const updatedPhoneNumber = document.getElementById('phone-number').value;
+            const updatedEducation = document.getElementById('education').value;
+
+            const userRole = localStorage.getItem('userRole');
+            const username = localStorage.getItem('username');
+
+            if (!userRole || !username) {
+                console.error("userRole or username is missing. Please check localStorage.");
+                return;
+            }
+
+            console.log("Submitting with role:", userRole);
+            console.log("Username:", username);
+
+            fetch('http://localhost:3001/update-user-info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    role: userRole,
+                    username: username,
+                    name: updatedName,
+                    phoneNumber: updatedPhoneNumber,
+                    education: updatedEducation
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Information updated successfully!");
+                    history.back(); // Automatically go back to the previous page
+                } else {
+                    alert("Failed to update information.");
+                }
+            })
+            .catch(error => console.error('Error updating user data:', error));
+        }
+
+        // Call the function to load user data when the page loads
+        window.onload = loadUserData;
+    </script>    
+
+</body>
+</html>

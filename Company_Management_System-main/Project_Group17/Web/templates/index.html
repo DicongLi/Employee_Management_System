@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Homepage</title>
+    <link rel="stylesheet" href="../static/css/index_style.css">
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <ul class="home-button">
+                <li><a href="index.html">LynGlow Corp</a></li>
+            </ul>
+            <ul>
+                <li><a href="employee-handbook.html?from=index">Employee Handbook</a></li>
+                <li><a href="suggestion-review.html">Feedback</a></li>
+                <li><a href="update.html">Updates</a></li>
+            </ul>
+        </nav>
+
+        <div class="login-button-container">
+            <a href="login.html" class="login-button">Login</a>
+        </div>
+    </div>
+
+    <!-- Activity Panel -->
+    <div class="activity-panel">
+        <h2>Recent Progress</h2>
+        <div class="activity-content active">
+            <h3>31.10.2024</h3>
+            <p>Over the past three years, 100,000 charity lunches have been successfully donated to Africa.</p>
+        </div>
+        <div class="activity-content">
+            <h3>8.9.2024</h3>
+            <p>Successfully launched the Oasis Project on Paradise Island.</p>
+        </div>
+        <div class="activity-content">
+            <h3>24.11.2024</h3>
+            <p>Successfully established three branches in Antarctica for the first time.</p>
+        </div>
+        <div class="pagination">
+            <button onclick="showActivity(0)" class="page-button"></button>
+            <button onclick="showActivity(1)" class="page-button"></button>
+            <button onclick="showActivity(2)" class="page-button"></button>
+        </div>
+    </div>
+
+    <script>
+        function setDynamicBackground() {
+            const now = new Date();
+            const hour = now.getHours();
+            const body = document.body;
+
+            if (hour >= 6 && hour < 12) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage3.webp')";
+            } else if (hour >= 12 && hour < 18) {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage2.webp')";
+            } else {
+                body.style.backgroundImage = "url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/HomePage1.webp')";
+            }
+        }
+
+        setDynamicBackground();
+        setInterval(setDynamicBackground, 3600000);
+
+        function showActivity(index) {
+            const activities = document.querySelectorAll('.activity-content');
+            const buttons = document.querySelectorAll('.page-button');
+            
+            // Show the selected activity and hide others
+            activities.forEach((activity, i) => {
+                activity.classList.toggle('active', i === index);
+            });
+            
+            // Change button style to indicate active state
+            buttons.forEach((button, i) => {
+                button.classList.toggle('active', i === index);
+            });
+        }
+    </script>
+
+</body>
+</html>

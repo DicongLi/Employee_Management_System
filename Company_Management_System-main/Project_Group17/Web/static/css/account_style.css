@@ -1,0 +1,84 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('https://raw.githubusercontent.com/DicongLi/Employee_Management_System/main/Account.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Edit Button Style */
+.edit-button {
+    position: absolute; /* 使用 absolute 或 fixed */
+    top: 20px;
+    right: 20px;
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+ border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Return Button Style */
+.return-button {
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    top: 20px;
+    left: 20px;
+}
+
+/* Header */
+.header {
+    color: white;
+    padding: 15px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1); /* 设置透明背景 */
+}
+
+/* Main Container */   
+.container {
+margin: 20px;
+padding: 20px;
+background-color: rgba(8, 8, 8, 0.274); /* 半透明 */
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+color: rgb(255, 255, 255);
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.content h2 {
+    margin-top: 0;
+}
+
+.info-group {
+    margin-bottom: 15px;
+}
+
+.info-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-group p {
+    margin: 0;
+    padding: 10px;
+    background-color: #00000042;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}

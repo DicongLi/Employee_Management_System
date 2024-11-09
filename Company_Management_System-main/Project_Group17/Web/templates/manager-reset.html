@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Password Reset</title>
+    <link rel="stylesheet" href="../static/css/manager-reset_style.css">
+</head>
+<body>
+    <a href="reset_password.html" class="back-button">Return</a>
+    
+    <div class="container">
+        <h2>Manager Password Reset</h2>
+        <button onclick="goToSecurityQuestions()">Security Questions</button>
+        <a class="contact-link" onclick="contactIT()">Contact the IT department</a>
+    </div>
+
+    <script>
+        function goToSecurityQuestions() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+
+            if (username) {
+                console.log(`Username: ${username}`);
+                const encodedUsername = encodeURIComponent(username);
+                window.location.href = `/security-questions.html?username=${encodedUsername}`;
+            } else {
+                alert('Username is missing. Please go back and try again.');
+            }
+        }
+
+        function contactIT() {
+            alert('Please deliver your Employee ID, Badge, Government-issued ID to LynGlow_IT_Department.@gmail.com');
+        }
+    </script>
+</body>
+</html>

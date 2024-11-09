@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Information</title>
+    <link rel="stylesheet" href="../static/css/account_style.css">
+</head>
+<body>
+
+    <a href="javascript:history.back()" id="return-button" class="return-button">Return</a>
+
+    <a href="account-edit.html" class="edit-button">Edit</a>    
+
+    <div class="header">
+        <h1>Account Information</h1>
+    </div>
+
+    <div class="container">
+        <h2>Your Account Details</h2>
+
+        <!-- Display Employee ID -->
+        <div class="info-group">
+            <label for="employee-id">Employee ID:</label>
+            <p id="employee-id"></p>
+        </div>
+
+        <!-- Display Manager ID -->
+        <div class="info-group">
+            <label for="manager-id">Manager ID:</label>
+            <p id="manager-id"></p>
+        </div>
+
+        <!-- Display Developer ID -->
+        <div class="info-group">
+            <label for="developer-id">Developer ID:</label>
+            <p id="developer-id"></p>
+        </div>
+
+        <!-- Display Manager Name -->
+        <div class="info-group">
+            <label for="name"> Name:</label>
+            <p id="name"></p>
+        </div>
+
+        <!-- Display Gender -->
+        <div class="info-group">
+            <label for="gender">Gender:</label>
+            <p id="gender"></p>
+        </div>
+
+        <!-- Display Phone Number -->
+        <div class="info-group">
+            <label for="phone-number">Phone Number:</label>
+            <p id="phone-number"></p>
+        </div>
+
+        <!-- Display Education -->
+        <div class="info-group">
+            <label for="education">Education:</label>
+            <p id="education"></p>
+        </div>
+
+        <!-- Display Position -->
+        <div class="info-group">
+            <label for="position">Position:</label>
+            <p id="position"></p>
+        </div>
+
+    </div>
+
+    <script>
+        // Function to load user data from backend
+        function loadUserData() {
+            // Get role and username from localStorage
+            const userRole = localStorage.getItem('userRole');
+            const username = localStorage.getItem('username');
+
+            // Fetch user data from the backend using the role and username
+            fetch(`http://localhost:3001/user-info?role=${userRole}&username=${username}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log('Received data:', data);  // 查看数据结构
+        document.getElementById('employee-id').textContent = data.Employee_id;  // 显示 Employee_id
+        document.getElementById('manager-id').textContent = data.Manager_id || 'N/A';  // 显示 Manager_id
+        document.getElementById('developer-id').textContent = data.Developer_id || 'N/A';  // 显示 Developer_id
+        document.getElementById('name').textContent = data.name;  // 显示 Manager_name
+        document.getElementById('gender').textContent = data.Gender;  // 显示 Gender
+        document.getElementById('phone-number').textContent = data.PhoneNumber;  // 显示 PhoneNumber
+        document.getElementById('education').textContent = data.Education;  // 显示 Education
+        document.getElementById('position').textContent = data.Position || 'Manager';
+    })
+    .catch(error => console.error('Error fetching user data:', error));
+
+        }
+
+        // Call the function to load user data when the page loads
+        window.onload = loadUserData;
+    </script>
+
+<!-- Logout Button -->
+<div style="text-align: center; margin-top: 20px;">
+    <button onclick="logout()" style="padding: 10px 20px; font-size: 16px; background-color: #00000051; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Logout
+    </button>
+</div>
+
+<script>
+    function logout() {
+        // Clear any stored user data
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('username');
+        
+        // Redirect to index.html
+        window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>

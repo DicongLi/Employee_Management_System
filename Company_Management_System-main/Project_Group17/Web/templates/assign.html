@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="../static/css/assign_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Assign Task</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="Department.html">Developer List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html" onclick="goToRegistration(event)">Registration</a>
+        <a href="employee-handbook.html?from=manager">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2>Assign New Task</h2>
+        <p>Use the form below to assign a task to a developer.</p>
+        
+        <!-- Assignment Form Section -->
+        <div class="assignment-form">
+            <form id="assignTaskForm">
+                <label for="taskID">Task ID:</label>
+                <select id="taskID" required>
+                    <option value="">Select Task ID</option>
+                </select>
+
+                <label for="developerID">Assign to Developer ID:</label>
+                <input type="text" id="developerID" placeholder="Enter Developer ID (e.g., d12345)" required>
+
+                <button type="submit">Assign Task</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Load Task IDs from localStorage
+        function loadTaskIDs() {
+            let projects = JSON.parse(localStorage.getItem('projects')) || []; // Get all projects from localStorage
+            const taskSelect = document.getElementById('taskID');
+
+            // Collect all task IDs from projects
+            projects.forEach(project => {
+                project.tasks.forEach(task => {
+                    const option = document.createElement('option');
+                    option.value = task.taskID; // Set value to taskID
+                    option.textContent = task.taskID; // Set display text to taskID
+                    taskSelect.appendChild(option); // Append option to the select dropdown
+                });
+            });
+        }
+
+        // Assign Task Form Submission
+        document.getElementById('assignTaskForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting in the traditional way
+
+            // Get form values
+            const taskID = document.getElementById('taskID').value;
+            const developerID = document.getElementById('developerID').value;
+
+            // Validate Developer ID format
+            const developerIDPattern = /^d\d{5}$/;
+            if (!developerIDPattern.test(developerID)) {
+                alert("Developer ID must be in the format dxxxxx (e.g., d12345).");
+                document.getElementById('developerID').value = ''; // Clear the invalid input
+                return;
+            }
+
+            // Display an alert to confirm assignment
+            alert(`Task ID: ${taskID} has been successfully assigned to Developer ID: ${developerID}`);
+
+            // Optionally, clear the form fields after submission
+            document.getElementById('assignTaskForm').reset();
+        });
+
+        // Call loadTaskIDs on page load
+        window.onload = loadTaskIDs;
+
+    </script>
+
+        <!-- Activity Reports Section -->
+        <div id="activityReports">
+            <!-- 项目信息会在这里动态加载 -->
+        </div>
+    <div>
+
+</body>
+</html>

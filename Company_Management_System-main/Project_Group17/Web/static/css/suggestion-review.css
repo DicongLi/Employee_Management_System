@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    position: absolute;
+    top: 20px;
+    width: 100%;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 80px; /* 确保内容在标题下方 */
+}
+
+.intro {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.333);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    width: 600px;
+}
+
+.suggestion {
+    width: 600px;
+    background-color: rgba(0, 0, 0, 0.468);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+.suggestion h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: rgb(255, 255, 255);
+}
+
+.suggestion p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.suggestion .label {
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.back-button {
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}

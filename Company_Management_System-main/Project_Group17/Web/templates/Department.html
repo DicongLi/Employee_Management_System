@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Dashboard</title>
+    <link rel="stylesheet" href="../static/css/Department_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+    
+</head>
+<body>
+
+    <div class="header">
+        <h1>Department</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="Department.html">Developer List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html" onclick="goToRegistration(event)">Registration</a>
+        <a href="employee-handbook.html?from=manager">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2>Welcome, Manager!</h2>
+        <h2>Select Department</h2>
+        <p>This is your dashboard. Here, you can manage employees, review feedback, and oversee projects.</p>
+        
+        <select id="departmentDropdown" onchange="fetchDepartmentData()">
+            <option value="RQA Engineer">RQA Engineer</option>
+            <option value="Embedded Software En">Embedded Software Engineer</option>
+            <option value="PC Software Engineer">PC Software Engineer</option>
+            <option value="Hardware Development">Hardware Development</option>
+            <option value="Test Engineer">Test Engineer</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Operation">Operation</option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Planning">Planning</option>
+            <option value="Administrative">Administrative</option>
+        </select>
+    
+        <div class="tables-container">
+            <div class="table-section">
+                <h2>List of Developers</h2>
+                <table id="developerTable">
+                    <tr>
+                        <th>Developer ID</th>
+                    </tr>
+                    <!-- Developer data will be filled here dynamically -->
+                </table>
+            </div>
+    
+            <div class="table-section">
+                <h2>List of Managers</h2>
+                <table id="managerTable">
+                    <tr>
+                        <th>Manager ID</th>
+                    </tr>
+                    <!-- Manager data will be filled here dynamically -->
+                </table>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        function fetchDepartmentData() {
+            const departmentName = document.getElementById('departmentDropdown').value;
+
+            // 根据选定的部门名称获取开发者和经理数据
+            fetch(`http://localhost:3001/department-info?department_name=${encodeURIComponent(departmentName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 更新开发者表格
+                    const developerTable = document.getElementById('developerTable');
+                    developerTable.innerHTML = '<tr><th>Developer ID</th></tr>'; // 重置表格
+                    if (data.developers && data.developers.length > 0) {
+                        data.developers.forEach(developer => {
+                            const row = `<tr><td>${developer.Developer_id}</td></tr>`;
+                            developerTable.innerHTML += row;
+                        });
+                    } else {
+                        developerTable.innerHTML += '<tr><td>No developers found</td></tr>';
+                    }
+
+                    // 更新经理表格
+                    const managerTable = document.getElementById('managerTable');
+                    managerTable.innerHTML = '<tr><th>Manager ID</th></tr>'; // 重置表格
+                    if (data.managers && data.managers.length > 0) {
+                        data.managers.forEach(manager => {
+                            const row = `<tr><td>${manager.Manager_id}</td></tr>`;
+                            managerTable.innerHTML += row;
+                        });
+                    } else {
+                        managerTable.innerHTML += '<tr><td>No managers found</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+    </script>
+
+    <!-- Activity Reports Section -->
+    <div id="activityReports">
+        <!-- 项目信息会在这里动态加载 -->
+    </div>
+</div>
+
+</body>
+</html>

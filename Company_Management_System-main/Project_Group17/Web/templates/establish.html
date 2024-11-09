@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Establish Task</title>
+    <link rel="stylesheet" href="../static/css/establish_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+
+</head>
+<body>
+
+    <div class="header">
+        <h1>Establish Task</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="Department.html">Developer List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html" onclick="goToRegistration(event)">Registration</a>
+        <a href="employee-handbook.html?from=manager">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2>Establish New Project and Task</h2>
+
+        <button id="startProjectButton">Establish Project</button>
+
+        <div id="inputSection" class="input-section">
+            <div class="input-field">
+                <label for="projectID">Project ID: </label>
+                <input type="text" id="projectID">
+            </div>
+            <div class="input-field">
+                <label for="projectName">Project Name: </label>
+                <input type="text" id="projectName">
+            </div>
+            <div class="input-field">
+                <label for="managerID">Manager ID: </label>
+                <input type="text" id="managerID">
+            </div>
+            <button id="confirmButton">Confirm</button>
+        </div>
+
+        <button id="establishTaskButton">Establish Task</button>
+
+        <div id="taskInputSection" class="task-input-section">
+            <div class="task-wrapper" id="taskWrapper"></div>
+            <div id="taskButtons" style="display: none;">
+                <button id="confirmTaskButton">Confirm</button>
+                <button id="addTaskButton">Add</button>
+                <button id="backTaskButton">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let loggedInManagerID = sessionStorage.getItem('loggedInManagerID') || "m00001";
+
+        // Helper function to validate inputs
+        function validateInputs(inputElement, pattern, errorMessage) {
+            const inputValue = inputElement.value;
+            if (!pattern.test(inputValue)) {
+                alert(errorMessage);
+                inputElement.value = ''; // Clear the input field
+                return false;
+            }
+            return true;
+        }
+
+        // API function to check project duplication
+        async function checkProjectDuplication(projectID, projectName) {
+            try {
+                const response = await fetch('http://localhost:3001/check-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ projectID, projectName })
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking project duplication:', error);
+                return { success: false, message: 'Server error, please try again later.' };
+            }
+        }
+
+        // API function to check task duplication
+        async function checkTaskDuplication(taskID, taskName) {
+            try {
+                const response = await fetch('http://localhost:3001/check-task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ taskID, taskName })
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking task duplication:', error);
+                return { success: false, message: 'Server error, please try again later.' };
+            }
+        }
+
+        // Function to handle "Establish Project" button click
+        document.getElementById('startProjectButton').addEventListener('click', function() {
+            document.getElementById('inputSection').classList.add('move-up');
+            this.classList.add('hidden'); // Hide the button
+            setTimeout(() => document.getElementById('inputSection').style.display = 'block', 500); // After 0.5s, show the input section
+        });
+
+        document.getElementById('confirmButton').addEventListener('click', async function() {
+            const projectIDPattern = /^p\d{5}$/; // 'p' followed by 5 digits
+            const namePattern = /^[A-Za-z0-9]{1,6}$/; // Alphanumeric, max length 6
+
+            const projectIDElement = document.getElementById('projectID');
+            const projectNameElement = document.getElementById('projectName');
+            const managerIDElement = document.getElementById('managerID');
+
+            const isProjectIDValid = validateInputs(projectIDElement, projectIDPattern, 'Project ID must be in the format pxxxxx (e.g., p12345).');
+            const isProjectNameValid = validateInputs(projectNameElement, namePattern, 'Project Name must be alphanumeric and not exceed 6 characters.');
+
+            if (!isProjectIDValid || !isProjectNameValid) return;
+
+            const projectID = projectIDElement.value;
+            const projectName = projectNameElement.value;
+            const managerID = managerIDElement.value;
+
+            if (!managerID) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            // Check for project duplication
+            const projectCheckResult = await checkProjectDuplication(projectID, projectName);
+            if (!projectCheckResult.success) {
+                alert(projectCheckResult.message);
+                projectIDElement.value = ''; // Clear the duplicate Project ID
+                projectNameElement.value = ''; // Clear the duplicate Project Name
+                return;
+            }
+
+            fetch('http://localhost:3001/verify-manager', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ managerID, loggedInManagerID })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Confirmation successful');
+                    document.getElementById('confirmButton').style.display = 'none';
+
+                    document.getElementById('inputSection').innerHTML = `
+                        <div class="static-field"><strong>Project ID:</strong> ${projectID}</div>
+                        <div class="static-field"><strong>Project Name:</strong> ${projectName}</div>
+                        <div class="static-field"><strong>Manager ID:</strong> ${managerID}</div>
+                    `;
+
+                    document.getElementById('establishTaskButton').style.display = 'block';
+
+                    // 从localStorage获取所有项目
+                    let projects = JSON.parse(localStorage.getItem('projects')) || []; // 如果没有项目，初始化为空数组
+
+                    // 保存项目ID和名称到localStorage
+                    const projectData = {
+                        projectID: projectID,
+                        projectName: projectName,
+                        tasks: [] // 初始化任务为空数组
+                    };
+                    
+                    // 添加当前项目到projects数组
+                    projects.push(projectData);
+                    localStorage.setItem('projects', JSON.stringify(projects));  // 保存更新后的项目列表
+
+                } else {
+                    alert('Invalid Manager ID');
+                    managerIDElement.value = ''; // Clear the Manager ID input field
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Function to handle "Establish Task" button click
+        document.getElementById('establishTaskButton').addEventListener('click', function() {
+            this.style.display = 'none'; // Hide the "Establish Task" button immediately
+            setTimeout(() => {
+                document.getElementById('taskInputSection').classList.add('move-up');
+                document.getElementById('taskInputSection').style.display = 'block'; 
+            }, 500); // After 0.5s, show the task input section
+
+            addNewTaskInputFields();
+        });
+
+        function addNewTaskInputFields() {
+            const taskWrapper = document.getElementById('taskWrapper');
+            const taskButtons = document.getElementById('taskButtons');
+
+            const taskSection = document.createElement('div');
+            taskSection.classList.add('task-section');
+
+            taskSection.innerHTML = `
+                <div class="input-field">
+                    <label>Task ID: </label>
+                    <input type="text" class="taskID">
+                </div>
+                <div class="input-field">
+                    <label>Task Name: </label>
+                    <input type="text" class="taskName">
+                </div>
+            `;
+
+            taskWrapper.appendChild(taskSection);
+            taskButtons.style.display = 'block';
+
+            // Confirm Task Button
+            document.getElementById('confirmTaskButton').onclick = async function() {
+                const taskIDPattern = /^t\d{5}$/;
+                const namePattern = /^[A-Za-z0-9]{1,6}$/;
+
+                const taskIDElement = taskSection.querySelector('.taskID');
+                const taskNameElement = taskSection.querySelector('.taskName');
+
+                const isTaskIDValid = validateInputs(taskIDElement, taskIDPattern, 'Task ID must be in the format txxxxx (e.g., t12345).');
+                const isTaskNameValid = validateInputs(taskNameElement, namePattern, 'Task Name must be alphanumeric and not exceed 6 characters.');
+
+                if (!isTaskIDValid || !isTaskNameValid) return;
+
+                // Check for task duplication
+                const taskCheckResult = await checkTaskDuplication(taskIDElement.value, taskNameElement.value);
+                if (!taskCheckResult.success) {
+                    alert(taskCheckResult.message);
+                    taskIDElement.value = ''; // Clear the duplicate Task ID
+                    taskNameElement.value = ''; // Clear the duplicate Task Name
+                    return;
+                }
+
+                alert('Input Successful');
+                taskIDElement.disabled = true;
+                taskNameElement.disabled = true;
+                taskIDElement.style.backgroundColor = '#e9ecef'; // Update input background color to indicate disabled
+                taskNameElement.style.backgroundColor = '#e9ecef';
+
+                // 从localStorage获取所有项目
+                let projects = JSON.parse(localStorage.getItem('projects')) || [];
+
+                // 找到当前项目
+                let currentProject = projects[projects.length - 1]; // 获取最后创建的项目
+
+                if (currentProject) {
+                    // 添加任务到当前项目
+                    const taskID = taskIDElement.value;
+                    const taskName = taskNameElement.value;
+                    currentProject.tasks.push({ taskID, taskName });
+
+                    // 更新projects中的项目
+                    const projectIndex = projects.findIndex(p => p.projectID === currentProject.projectID);
+                    projects[projectIndex] = currentProject;
+
+                    // 更新localStorage中的项目数据
+                    localStorage.setItem('projects', JSON.stringify(projects));
+
+                    // 跳转到 manager.html 页面
+                    window.location.href = "manager.html";
+                } else {
+                    alert('Project information not found. Please establish the project first.');
+                }
+            };
+
+            // Add Task Button
+            document.getElementById('addTaskButton').onclick = async function() {
+                addNewTaskInputFields();
+            };
+
+            // Back Task Button
+            document.getElementById('backTaskButton').onclick = function() {
+                const allTaskSections = document.querySelectorAll('.task-section');
+
+                if (allTaskSections.length > 1) {
+                    taskWrapper.removeChild(allTaskSections[allTaskSections.length - 1]);
+                    const previousTaskSection = allTaskSections[allTaskSections.length - 2];
+                    previousTaskSection.querySelector('.taskID').disabled = false;
+                    previousTaskSection.querySelector('.taskName').disabled = false;
+                    previousTaskSection.querySelector('.taskID').style.backgroundColor = 'white';
+                    previousTaskSection.querySelector('.taskName').style.backgroundColor = 'white';
+                }
+            };
+        }
+    </script>
+
+            <!-- Activity Reports Section -->
+            <div id="activityReports">
+                <!-- 项目信息会在这里动态加载 -->
+            </div>
+        </div>
+</body>
+</html>

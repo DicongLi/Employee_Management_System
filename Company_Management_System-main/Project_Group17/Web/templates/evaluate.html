@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="../static/css/evaluate_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+
+</head>
+<body>
+
+    <div class="header">
+        <h1>Task Evaluation</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+        
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="default-dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="employee-list.html">Employee List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="default-dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html">Registration</a>
+        <a href="employee-handbook.html?from=evaluate">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <h2>Evaluate Task Progress</h2>
+
+        <div class="input-section">
+            <div class="input-field">
+                <label for="taskID">Task ID: </label>
+                <select id="taskID">
+                    <option value="">Select Task ID</option>
+                </select>
+            </div>
+            <button id="findTaskButton">Find Task</button>
+        </div>
+
+        <!-- Developer info will be inserted here -->
+        <div id="developerInfo" class="developer-info"></div>
+
+        <div id="evaluationSection" class="input-section">
+            <div class="input-field">
+                <label for="evaluationStatus">Evaluation Status: </label>
+                <select id="evaluationStatus">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="Fail">Fail</option>
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="comments">Comments: </label>
+                <textarea id="comments" rows="4" style="width: 100%;"></textarea>
+            </div>
+            <button id="submitEvaluationButton">Submit Evaluation</button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch unevaluated tasks from server and populate the dropdown
+        window.onload = function () {
+            fetch('http://localhost:3001/api/unevaluated-tasks')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(tasks => {
+                    console.log('Fetched tasks:', tasks); // Log fetched tasks for debugging
+                    const taskSelect = document.getElementById('taskID');
+                    if (tasks.length === 0) {
+                        alert('No unevaluated tasks found.');
+                    } else {
+                        tasks.forEach(task => {
+                            const option = document.createElement('option');
+                            option.value = task.task_id;
+                            option.textContent = task.task_id;
+                            taskSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching tasks:', error));
+        };
+
+        // Handle "Find Task" button click
+        document.getElementById('findTaskButton').addEventListener('click', function () {
+            const taskID = document.getElementById('taskID').value;
+            if (!taskID) {
+                alert('Please select a Task ID to evaluate.');
+                return;
+            }
+
+            // Fetch developer information for the selected task
+            fetch(`http://localhost:3001/api/task-developer?taskID=${taskID}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(developer => {
+                    const developerInfoDiv = document.getElementById('developerInfo');
+                    developerInfoDiv.innerHTML = `Assigned Developer ID: ${developer.developer_id}`;
+
+                    // Display evaluation section
+                    document.getElementById('evaluationSection').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching developer:', error);
+                    alert('Error fetching developer information. Please try again.');
+                });
+        });
+
+        // Handle "Submit Evaluation" button click
+        document.getElementById('submitEvaluationButton').addEventListener('click', function () {
+            const taskID = document.getElementById('taskID').value;
+            const evaluationStatus = document.getElementById('evaluationStatus').value;
+            const comments = document.getElementById('comments').value.trim();
+
+            if (!taskID) {
+                alert('Please select a Task ID.');
+                return;
+            }
+
+            alert(`Evaluation for Task ID ${taskID} submitted successfully.\nStatus: ${evaluationStatus}\nComments: ${comments}`);
+        });
+    </script>
+
+            <!-- Activity Reports Section -->
+            <div id="activityReports">
+                <!-- 项目信息会在这里动态加载 -->
+            </div>
+        </div>
+</body>
+
+</html>

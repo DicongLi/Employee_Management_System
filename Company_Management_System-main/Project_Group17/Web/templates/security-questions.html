@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Questions</title>
+    <link rel="stylesheet" href="../static/css/security-questions.css">
+</head>
+<body>
+    <a href="reset_password.html" class="back-button">Return</a>
+
+    <div class="container">
+        <h2>Please answer the security questions</h2>
+        <div id="security-questions-container">
+            <!-- 问题表单将在这里动态生成 -->
+        </div>
+        <button onclick="submitAnswers()">Submit Answers</button>
+    </div>
+
+    <script>
+        async function loadSecurityQuestions() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+            
+            if (!username) {
+                alert('Username is missing. Please go back and try again.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/get-security-questions?username=${encodeURIComponent(username)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const container = document.getElementById('security-questions-container');
+                    container.innerHTML = '';
+
+                    result.questions.forEach((question, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'question';
+                        div.innerHTML = `
+                            <p>${question}</p>
+                            <input type="text" id="answer${index}" placeholder="Your answer">
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    alert(result.message || 'Failed to load security questions.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while loading security questions.');
+            }
+        }
+
+        async function submitAnswers() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+            
+            if (!username) {
+                alert('Username is missing. Please go back and try again.');
+                return;
+            }
+
+            const answers = [];
+            for (let i = 0; i < 3; i++) {
+                const answer = document.getElementById(`answer${i}`).value;
+                if (answer) {
+                    answers.push(answer);
+                }
+            }
+
+            if (answers.length === 0) {
+                alert('Please provide your answers.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3001/verify-security-answers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, answers })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Security answers verified successfully!');
+                    // 核实通过后跳转到 set-password.html 页面
+                    window.location.href = `/set-password.html?username=${encodeURIComponent(username)}`;
+                } else {
+                    alert(result.message || 'Incorrect answers. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while verifying your answers.');
+            }
+        }
+
+        window.onload = loadSecurityQuestions;
+    </script>
+</body>
+    <a href="javascript:history.back()" class="back-button">Return</a>
+</html>

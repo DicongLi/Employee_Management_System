@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestion Box</title>
+    <link rel="stylesheet" href="../static/css/suggestion-box_style.css">
+</head>
+<body>
+
+    <a href="index.html" class="back-button">Return</a>
+   
+    <h1>Suggestion Box</h1>
+
+    <div class="form-container">
+        <form id="suggestionForm">
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <option value="" disabled selected>Select a type</option>
+                <option value="Project">Project</option>
+                <option value="Environment">Environment</option>
+                <option value="Regulation">Regulation</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <textarea name="suggestion" placeholder="Enter your suggestion here..." required></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>Submission Successful!</p>
+        </div>
+    </div>
+
+    <script>
+        const suggestionForm = document.getElementById('suggestionForm');
+        const successModal = document.getElementById('successModal');
+        const closeModal = document.getElementById('closeModal');
+
+        suggestionForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get suggestion text and type
+            const suggestionText = suggestionForm.querySelector('textarea[name="suggestion"]').value;
+            const suggestionType = suggestionForm.querySelector('select[name="type"]').value;
+
+            // Fetch existing suggestions and types
+            let suggestions = JSON.parse(localStorage.getItem('suggestions')) || [];
+            let suggestionTypes = JSON.parse(localStorage.getItem('suggestionTypes')) || [];
+            let replies = JSON.parse(localStorage.getItem('replies')) || [];
+
+            // Add new suggestion and type
+            suggestions.push(suggestionText);
+            suggestionTypes.push(suggestionType);
+            replies.push(null); // Add null for the reply (indicating it's not yet replied)
+
+            // Store updated suggestions, types, and replies in localStorage
+            localStorage.setItem('suggestions', JSON.stringify(suggestions));
+            localStorage.setItem('suggestionTypes', JSON.stringify(suggestionTypes));
+            localStorage.setItem('replies', JSON.stringify(replies));
+
+            // Show success modal
+            successModal.style.display = "block";
+
+            // Reset form
+            suggestionForm.reset();
+        });
+
+        // Close modal when the 'X' button is clicked
+        closeModal.onclick = function() {
+            successModal.style.display = "none";
+        };
+
+        // Close modal if clicking outside the modal
+        window.onclick = function(event) {
+            if (event.target == successModal) {
+                successModal.style.display = "none";
+            }
+        };
+    </script>
+
+</body>
+</html>

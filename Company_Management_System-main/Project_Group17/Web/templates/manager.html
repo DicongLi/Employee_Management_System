@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="../static/css/manager_style.css">
+
+    <script src="../static/js/engine1.js"></script>
+    <script src="../static/js/engine2.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Manager Dashboard</h1>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav">
+        <div class="search-container">
+            <input type="text" id="searchID" placeholder="输入Project ID或Task ID" />
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Task</button>
+            <div class="dropdown-content">
+                <a href="establish.html">Establish</a>
+                <a href="assign.html">Assign</a>
+                <a href="evaluate.html">Evaluate</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Check</button>
+            <div class="dropdown-content">
+                <a href="Department.html">Developer List</a>
+                <a href="task-progress.html">Task Progress</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn">Feedback</button>
+            <div class="dropdown-content">
+                <a href="suggestion-reply.html">Suggestion Reply</a>
+                <a href="suggestion-review.html">Suggestion Review</a>
+            </div>
+        </div>
+
+        <a href="manager.html" class="activity">Activity</a>
+        <a href="registration.html" onclick="goToRegistration(event)">Registration</a>
+        <a href="employee-handbook.html?from=manager">Employee Handbook</a>
+        <a href="account.html">Account</a>
+    </div>
+
+    <div class="container">
+        <h2>Welcome, Manager!</h2>
+        <p>This is your dashboard. Here, you can manage employees, review feedback, and oversee projects.</p>
+        
+        <!-- Activity Reports Section -->
+        <div id="activityReports">
+            <!-- 项目信息会在这里动态加载 -->
+        </div>
+    </div>
+
+</body>
+</html>

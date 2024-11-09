@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Password Reset</title>
+    <link rel="stylesheet" href="../static/css/developer-reset_style.css">
+</head>
+<body>
+    <a href="reset_password.html" class="back-button">Return</a>
+
+    <div class="container">
+        <h2>How would you like to recover your password?</h2>
+        <button onclick="goToSecurityQuestions()">Security Questions</button>
+        <button onclick="goToManagerVerification()">Manager Verification</button>
+    </div>
+
+    <script>
+        function goToSecurityQuestions() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+    
+            if (username) {
+                console.log(`Username: ${username}`);
+                const encodedUsername = encodeURIComponent(username);
+                window.location.href = `/security-questions.html?username=${encodedUsername}`;
+            } else {
+                alert('Username is missing. Please go back and try again.');
+            }
+        }
+
+        function goToManagerVerification() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+
+            if (username) {
+                console.log(`UserID: ${username}`);
+                const encodedUserID = encodeURIComponent(username);
+                window.location.href = `/manager-verification.html?userID=${encodedUserID}`;
+            } else {
+                alert('User ID is missing. Please go back and try again.');
+            }
+        }
+    </script>
+</body>
+</html>
